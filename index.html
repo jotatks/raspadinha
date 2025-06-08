@@ -85,10 +85,12 @@
     </div>
 
     <!-- Container das Raspadinhas -->
-    <div class="main-content grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+    <!-- ALTERADO: Layout flexível para telemóveis, grid para ecrãs maiores -->
+    <div class="main-content flex flex-col items-center md:grid md:grid-cols-3 gap-8 w-full md:max-w-4xl">
         
         <!-- Raspadinha 1: Roxa -->
-        <div id="card-1" class="scratch-card-container">
+        <!-- ALTERADO: Largura controlada para telemóveis -->
+        <div id="card-1" class="scratch-card-container w-10/12 max-w-xs md:w-full md:max-w-none">
             <div class="scratch-card" data-color1="#8b5cf6" data-color2="#4c1d95">
                 <img src="https://i.gifer.com/Ybif.gif" alt="GIF engraçado" class="hidden-gif">
                 <canvas id="canvas-1"></canvas>
@@ -97,7 +99,8 @@
         </div>
 
         <!-- Raspadinha 2: Rosa -->
-        <div id="card-2" class="scratch-card-container">
+        <!-- ALTERADO: Largura controlada para telemóveis -->
+        <div id="card-2" class="scratch-card-container w-10/12 max-w-xs md:w-full md:max-w-none">
             <div class="scratch-card" data-color1="#ec4899" data-color2="#831843">
                 <img src="https://i.gifer.com/K9e.gif" alt="GIF de curiosidade" class="hidden-gif">
                 <canvas id="canvas-2"></canvas>
@@ -106,7 +109,8 @@
         </div>
 
         <!-- Raspadinha 3: Vermelha -->
-        <div id="card-3" class="scratch-card-container">
+        <!-- ALTERADO: Largura controlada para telemóveis -->
+        <div id="card-3" class="scratch-card-container w-10/12 max-w-xs md:w-full md:max-w-none">
             <div class="scratch-card" data-color1="#f87171" data-color2="#991b1b">
                 <img src="https://i.gifer.com/D9u.gif" alt="GIF de prêmio" class="hidden-gif">
                 <canvas id="canvas-3"></canvas>
