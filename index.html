@@ -3,7 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Um Convite Misterioso Para Você</title>
+    
+    <!-- Título da Aba do Navegador -->
+    <title>Um Convite Especial Para Você</title>
+
+    <!-- NOVO: Meta Tags para Pré-visualização de Links (Open Graph) -->
+    <meta property="og:title" content="Um Convite Especial para a Sofia">
+    <meta property="og:description" content="Uma raspadinha misteriosa te espera. Raspe para revelar a surpresa!">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1522852502094-fee786a1f1a6?q=80&w=1287&auto=format&fit=crop">
+    <meta property="og:type" content="website">
+    
+    <!-- Meta Tags para o Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Um Convite Especial para a Sofia">
+    <meta name="twitter:description" content="Uma raspadinha misteriosa te espera. Raspe para revelar a surpresa!">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1522852502094-fee786a1f1a6?q=80&w=1287&auto=format&fit=crop">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,7 +98,7 @@
 
     <canvas id="particle-canvas"></canvas>
 
-    <!-- NOVO: Modal de Boas-vindas -->
+    <!-- Modal de Boas-vindas -->
     <div id="welcome-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4" style="z-index: 60;">
         <div class="bg-slate-800 rounded-2xl p-6 sm:p-8 text-center max-w-md w-full transform transition-transform duration-300 shadow-2xl">
             <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4">Bem-vinda, Sofia!</h2>
@@ -212,7 +227,7 @@
         // Script da Raspadinha
         document.addEventListener('DOMContentLoaded', () => {
             
-            // NOVO: Lógica do Modal de Boas-vindas
+            // Lógica do Modal de Boas-vindas
             const welcomeModal = document.getElementById('welcome-modal');
             const startGameBtn = document.getElementById('start-game-btn');
             const pageContent = document.getElementById('page-content');
