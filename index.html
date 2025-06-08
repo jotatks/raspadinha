@@ -11,7 +11,21 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            background-color: #0f172a; /* Cor de fundo sólida */
+            color: #e2e8f0;
+            overflow-x: hidden; /* Previne scroll horizontal */
         }
+
+        /* Canvas para o fundo de partículas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Coloca o canvas atrás de todo o conteúdo */
+        }
+
         .scratch-card {
             position: relative;
             width: 100%;
@@ -19,7 +33,7 @@
             cursor: grab;
             -webkit-tap-highlight-color: transparent;
             border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
         .scratch-card.grabbing {
             cursor: grabbing;
@@ -54,17 +68,24 @@
             transition: opacity 0.5s ease;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
+        /* Ajuste para o conteúdo ficar por cima do fundo */
+        .main-content {
+            position: relative;
+            z-index: 10;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
 
-    <div class="text-center mb-8">
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="main-content text-center mb-8">
         <h1 class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">Raspadinha Misteriosa</h1>
         <p class="text-gray-300 mt-2">Raspe e teste sua sorte, Sofia!</p>
     </div>
 
     <!-- Container das Raspadinhas -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+    <div class="main-content grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
         
         <!-- Raspadinha 1: Roxa -->
         <div id="card-1" class="scratch-card-container">
@@ -95,8 +116,8 @@
     </div>
 
     <!-- Modal de Mensagem -->
-    <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
-        <div id="modal-content" class="bg-gray-800 rounded-2xl p-6 sm:p-8 text-center max-w-md w-full transform scale-95 transition-transform duration-300">
+    <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none" style="z-index: 50;">
+        <div id="modal-content" class="bg-slate-800 rounded-2xl p-6 sm:p-8 text-center max-w-md w-full transform scale-95 transition-transform duration-300">
             <p id="modal-text" class="text-lg sm:text-xl mb-6"></p>
             <div id="modal-actions">
                 <button id="close-modal-btn" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full transition-colors">Fechar</button>
@@ -106,15 +127,84 @@
 
 
     <script>
+        // Script das Partículas
+        const particleCanvas = document.getElementById('particle-canvas');
+        const pctx = particleCanvas.getContext('2d');
+        particleCanvas.width = window.innerWidth;
+        particleCanvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        class Particle {
+            constructor(x, y, size, color, speedX, speedY) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.color = color;
+                this.speedX = speedX;
+                this.speedY = speedY;
+            }
+            draw() {
+                pctx.fillStyle = this.color;
+                pctx.beginPath();
+                pctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                pctx.fill();
+            }
+            update() {
+                if (this.x > particleCanvas.width || this.x < 0) {
+                    this.speedX = -this.speedX;
+                }
+                if (this.y > particleCanvas.height || this.y < 0) {
+                    this.speedY = -this.speedY;
+                }
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.draw();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (particleCanvas.height * particleCanvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = Math.random() * particleCanvas.width;
+                let y = Math.random() * particleCanvas.height;
+                let speedX = (Math.random() * 0.4) - 0.2;
+                let speedY = (Math.random() * 0.4) - 0.2;
+                let color = 'rgba(255, 255, 255, 0.5)';
+                particlesArray.push(new Particle(x, y, size, color, speedX, speedY));
+            }
+        }
+
+        function animateParticles() {
+            pctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+            initParticles();
+        });
+
+
+        // Script da Raspadinha
         document.addEventListener('DOMContentLoaded', () => {
             const messages = {
-                'card-1': "Não foi dessa vez, tente mais uma vez",
+                'card-1': "Não foi dessa vez, tente mais uma vez Sofia.",
                 'card-2': "Parabéns você ganhou um <span class='uppercase font-bold text-green-400'>pix de R$ 1,00</span>",
                 'card-3': `
                     <p class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 mb-4">⭐ SUPER PRÊMIO! ⭐</p>
-                    <p>Essa foi uma forma um pouco diferente de te fazer um convite. Em vez de uma mensagem simples, quis criar algo que, quem sabe, te fizesse sorrir.</p>
-                    <p class="mt-4 font-semibold">A verdade é que eu adoraria te conhecer melhor. Então, a pergunta final é:</p>
-                    <p class="mt-4">Aceitas sair para jantar comigo e descobrir se a nossa conversa é tão boa quanto este jogo? 😉</p>
+                    <p>Parabéns, Sofia. Você acaba de receber um prêmio único: um convite cuidadosamente pensado para você.</p>
+                    <p class="mt-4">Mais do que uma simples mensagem, esta é uma demonstração sincera do quanto eu gostaria de conhecê-la melhor.</p>
+                    <p class="mt-4 font-semibold">Então, permita-me fazer o convite que realmente importa: Sofia, aceita jantar comigo e me conceder a honra da sua companhia? 🥂</p>
                     <p class="mt-6 text-sm text-gray-400">– Jhonatan.</p>`
             };
 
@@ -123,14 +213,12 @@
             const modalText = document.getElementById('modal-text');
             const modalActions = document.getElementById('modal-actions');
             
-            // Lógica para as raspadinhas
             const scratchCards = [
                 setupScratchCard('card-1', () => unlockCard('card-2')),
                 setupScratchCard('card-2', () => unlockCard('card-3')),
                 setupScratchCard('card-3', () => {})
             ];
             
-            // Inicialmente, bloqueia as raspadinhas 2 e 3
             scratchCards[1].lock();
             scratchCards[2].lock();
 
@@ -155,7 +243,6 @@
                 function redraw() {
                     if (isCompleted) return;
                     
-                    // NOVA LÓGICA: Desenha um gradiente para parecer mais com uma raspadinha
                     const color1 = card.dataset.color1;
                     const color2 = card.dataset.color2;
                     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
@@ -167,6 +254,7 @@
                 }
 
                 function getScratchPosition(e) {
+                    e.preventDefault();
                     const rect = canvas.getBoundingClientRect();
                     const touch = e.touches ? e.touches[0] : e;
                     return {
@@ -177,10 +265,8 @@
 
                 function scratch(e) {
                     if (!isDrawing || isLocked || isCompleted) return;
-                    e.preventDefault();
                     const pos = getScratchPosition(e);
                     
-                    // A "raspagem" apaga o conteúdo do canvas (o gradiente)
                     ctx.globalCompositeOperation = 'destination-out';
                     ctx.beginPath();
                     ctx.arc(pos.x, pos.y, Math.min(canvas.width, canvas.height) * 0.12, 0, Math.PI * 2);
@@ -221,20 +307,21 @@
                         isCompleted = true;
                         canvas.style.transition = 'opacity 0.7s ease-out';
                         canvas.style.opacity = '0';
-                        showModal(cardId);
-                        if(onComplete) onComplete();
+                        setTimeout(() => {
+                           showModal(cardId);
+                           if(onComplete) onComplete();
+                        }, 200);
                     }
                 }
 
-                // Event Listeners
                 canvas.addEventListener('mousedown', startDrawing);
                 canvas.addEventListener('mousemove', scratch);
-                canvas.addEventListener('mouseup', stopDrawing);
+                document.addEventListener('mouseup', stopDrawing);
                 canvas.addEventListener('mouseleave', stopDrawing);
 
                 canvas.addEventListener('touchstart', startDrawing, { passive: false });
                 canvas.addEventListener('touchmove', scratch, { passive: false });
-                canvas.addEventListener('touchend', stopDrawing);
+                document.addEventListener('touchend', stopDrawing);
                 canvas.addEventListener('touchcancel', stopDrawing);
                 
                 window.addEventListener('resize', resizeCanvas);
