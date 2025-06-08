@@ -72,6 +72,10 @@
         .main-content {
             position: relative;
             z-index: 10;
+            transition: filter 0.5s ease-in-out;
+        }
+        .content-blur {
+            filter: blur(8px);
         }
     </style>
 </head>
@@ -79,17 +83,25 @@
 
     <canvas id="particle-canvas"></canvas>
 
-    <div class="main-content text-center mb-8">
+    <!-- NOVO: Modal de Boas-vindas -->
+    <div id="welcome-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4" style="z-index: 60;">
+        <div class="bg-slate-800 rounded-2xl p-6 sm:p-8 text-center max-w-md w-full transform transition-transform duration-300 shadow-2xl">
+            <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4">Bem-vinda, Sofia!</h2>
+            <p class="text-lg text-slate-300 mb-2">Você recebeu acesso a raspadinha misteriosa.</p>
+            <p class="text-slate-400 mb-6">Use o dedo ou o mouse para raspar as três raspadinhas. A próxima raspadinha só é liberada quando a anterior for completada. Boa sorte!</p>
+            <button id="start-game-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition-colors w-full">Começar a Brincadeira!</button>
+        </div>
+    </div>
+
+    <div id="page-content" class="main-content text-center mb-8">
         <h1 class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">Raspadinha Misteriosa</h1>
         <p class="text-gray-300 mt-2">Raspe e teste sua sorte, Sofia!</p>
     </div>
 
     <!-- Container das Raspadinhas -->
-    <!-- ALTERADO: Layout flexível para telemóveis, grid para ecrãs maiores -->
-    <div class="main-content flex flex-col items-center md:grid md:grid-cols-3 gap-8 w-full md:max-w-4xl">
+    <div id="cards-container" class="main-content flex flex-col items-center md:grid md:grid-cols-3 gap-8 w-full md:max-w-4xl">
         
         <!-- Raspadinha 1: Roxa -->
-        <!-- ALTERADO: Largura controlada para telemóveis -->
         <div id="card-1" class="scratch-card-container w-10/12 max-w-xs md:w-full md:max-w-none">
             <div class="scratch-card" data-color1="#8b5cf6" data-color2="#4c1d95">
                 <img src="https://i.gifer.com/Ybif.gif" alt="GIF engraçado" class="hidden-gif">
@@ -99,7 +111,6 @@
         </div>
 
         <!-- Raspadinha 2: Rosa -->
-        <!-- ALTERADO: Largura controlada para telemóveis -->
         <div id="card-2" class="scratch-card-container w-10/12 max-w-xs md:w-full md:max-w-none">
             <div class="scratch-card" data-color1="#ec4899" data-color2="#831843">
                 <img src="https://i.gifer.com/K9e.gif" alt="GIF de curiosidade" class="hidden-gif">
@@ -109,7 +120,6 @@
         </div>
 
         <!-- Raspadinha 3: Vermelha -->
-        <!-- ALTERADO: Largura controlada para telemóveis -->
         <div id="card-3" class="scratch-card-container w-10/12 max-w-xs md:w-full md:max-w-none">
             <div class="scratch-card" data-color1="#f87171" data-color2="#991b1b">
                 <img src="https://i.gifer.com/D9u.gif" alt="GIF de prêmio" class="hidden-gif">
@@ -201,6 +211,28 @@
 
         // Script da Raspadinha
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // NOVO: Lógica do Modal de Boas-vindas
+            const welcomeModal = document.getElementById('welcome-modal');
+            const startGameBtn = document.getElementById('start-game-btn');
+            const pageContent = document.getElementById('page-content');
+            const cardsContainer = document.getElementById('cards-container');
+
+            pageContent.classList.add('content-blur');
+            cardsContainer.classList.add('content-blur');
+
+            startGameBtn.addEventListener('click', () => {
+                welcomeModal.style.transition = 'opacity 0.5s ease';
+                welcomeModal.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeModal.classList.add('pointer-events-none');
+                }, 500);
+
+                pageContent.classList.remove('content-blur');
+                cardsContainer.classList.remove('content-blur');
+            });
+
+
             const messages = {
                 'card-1': "Não foi dessa vez, tente mais uma vez <span class='text-red-400 font-semibold'>Sofia</span>.",
                 'card-2': "Parabéns você ganhou um <span class='uppercase font-bold text-green-400'>pix de R$ 1,00</span>",
